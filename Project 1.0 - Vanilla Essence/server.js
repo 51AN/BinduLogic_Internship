@@ -18,7 +18,22 @@ const serveFile = (res, filePath, contentType) => {
 // http server
 const server = http.createServer((req, res) => {
     const route = req.url;
-    serveFile(res, path.join(__dirname, 'pages', 'books.html'), 'text/html');    
+
+    switch (route) {
+        case '/':
+            serveFile(res, path.join(__dirname, 'pages', 'home.html'), 'text/html');
+            break;
+        case '/books':
+            serveFile(res, path.join(__dirname, 'pages', 'books.html'), 'text/html');
+            break;
+        case '/authors':
+            serveFile(res, path.join(__dirname, 'pages', 'authors.html'), 'text/html');
+            break;
+        default:
+            res.writeHead(404, { 'Content-Type': 'text/plain' });
+            res.end('404 - Page Not Found');
+            break;
+    }
 });
 
 const PORT = 3000;
