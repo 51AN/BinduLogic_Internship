@@ -3,7 +3,9 @@ const fs = require('fs');
 const path = require('path');
 const querystring = require('querystring');
 
-const books = []; // Array to store books in server temporarily
+const books = [
+    {title: 'Twilight', description:'Love story between a human and a vampire'}
+] // Array to store books in server temporarily
 const authors = [
     { name: 'Stephenie Meyer', bio: 'Vampires and werewolfs are her favorite things' },
     { name: 'John Blake', bio: 'He lives for the thrill' },
