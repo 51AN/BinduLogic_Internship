@@ -1,8 +1,11 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const querystring = require('querystring');
 
-//helper function
+const books = []; // Array to store books in server temporarily
+
+// Helper function
 const serveFile = (res, filePath, contentType) => {
     fs.readFile(filePath, (err, data) => {
         if (err) {
@@ -15,24 +18,53 @@ const serveFile = (res, filePath, contentType) => {
     });
 };
 
-// http server
+// HTTP server
 const server = http.createServer((req, res) => {
     const route = req.url;
+    const method = req.method;
 
-    switch (route) {
-        case '/':
-            serveFile(res, path.join(__dirname, 'pages', 'home.html'), 'text/html');
-            break;
-        case '/books':
-            serveFile(res, path.join(__dirname, 'pages', 'books.html'), 'text/html');
-            break;
-        case '/authors':
-            serveFile(res, path.join(__dirname, 'pages', 'authors.html'), 'text/html');
-            break;
-        default:
-            res.writeHead(404, { 'Content-Type': 'text/plain' });
-            res.end('404 - Page Not Found');
-            break;
+    if (method === 'GET') {
+        switch (route) {
+            case '/':
+                serveFile(res, path.join(__dirname, 'pages', 'home.html'), 'text/html');
+                break;
+            case '/books':
+                serveFile(res, path.join(__dirname, 'pages', 'books.html'), 'text/html');
+                break;
+            case '/authors':
+                serveFile(res, path.join(__dirname, 'pages', 'authors.html'), 'text/html');
+                break;
+            case '/books/data':
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify(books));
+                break;
+            default:
+                res.writeHead(404, { 'Content-Type': 'text/plain' });
+                res.end('404 - Page Not Found');
+                break;
+        }
+    } else if (method === 'POST' && route === '/books/new') {
+        let body = '';
+
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+
+        req.on('end', () => {
+            const parsedData = querystring.parse(body);
+            const newBook = {
+                title: parsedData.title,
+                description: parsedData.description
+            };
+
+            books.push(newBook);
+
+            res.writeHead(302, { 'Location': '/books' });
+            res.end();
+        });
+    } else {
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.end('404 - Page Not Found');
     }
 });
 
