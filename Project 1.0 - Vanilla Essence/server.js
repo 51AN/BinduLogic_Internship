@@ -4,6 +4,11 @@ const path = require('path');
 const querystring = require('querystring');
 
 const books = []; // Array to store books in server temporarily
+const authors = [
+    { name: 'Stephenie Meyer', bio: 'Vampires and werewolfs are her favorite things' },
+    { name: 'John Blake', bio: 'He lives for the thrill' },
+    { name: 'William Shakespear', bio: 'A master of the art of writing' }
+] // Array for Authors
 
 // Helper function
 const serveFile = (res, filePath, contentType) => {
@@ -38,6 +43,10 @@ const server = http.createServer((req, res) => {
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify(books));
                 break;
+            case '/authors/data':
+                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify(authors));
+                    break;
             default:
                 res.writeHead(404, { 'Content-Type': 'text/plain' });
                 res.end('404 - Page Not Found');

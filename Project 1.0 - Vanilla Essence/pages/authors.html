@@ -7,6 +7,26 @@
 <body>
     <h1>Authors</h1>
     <p>Information about authors in our library.</p>
+
+    <h2>Author List</h2>
+    <ul id="author-list">
+        <!-- Authors will be listed here -->
+    </ul>
+
+    <script>
+        // This script fetches the current list of authors and displays them on the page
+        fetch('/authors/data')
+            .then(response => response.json())
+            .then(data => {
+                const authorList = document.getElementById('author-list');
+                data.forEach(author => {
+                    const li = document.createElement('li');
+                    li.textContent = `${author.name}: ${author.bio}`;
+                    authorList.appendChild(li);
+                });
+            });
+    </script>
+    
     <nav>
         <ul>
             <li><a href="/">Back to Home</a></li>
