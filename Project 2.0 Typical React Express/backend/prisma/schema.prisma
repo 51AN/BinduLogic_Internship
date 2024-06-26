@@ -16,13 +16,76 @@ datasource db {
 //Data model for Tables
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  password  String 
+  email     String    @unique
   age       Int
+  personalLibrary  PersonalLibrary? 
+  progresses Progress[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 model Library {
-  id Int  @id
+  id        String    @id @default(uuid()) 
+  books     Book[]
+  authors   Author[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
+model Book {
+  id        String    @id @default(uuid()) 
+  name      String    @unique
+  pages     Int
+  publishedAt DateTime
+  Chapters  Int?
 
+  libraryId String   
+  library   Library  @relation(fields: [libraryId], references: [id], onDelete: Cascade)
+
+  personalLibraryId String   
+  personalLibrary   PersonalLibrary  @relation(fields: [personalLibraryId], references: [id], onDelete: Cascade)
+
+  progresses Progress[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+}
+
+model Author {
+  id        String    @id @default(uuid())
+  name      String    @unique
+
+  libraryId String   
+  library   Library  @relation(fields: [libraryId], references: [id], onDelete: Cascade)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model PersonalLibrary {
+  id        String    @id @default(uuid())
+
+  userId   Int    @unique
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)  
+  books     Book[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Progress {
+  id        String    @id @default(uuid())
+  userId    Int
+  bookId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book      Book       @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  onPage    Int
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
